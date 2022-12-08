@@ -108,6 +108,13 @@ namespace Cons
                 caption: v_descriptions);
   
         }
+        public static async Task copy_message(Message message)
+        {
+            Console.WriteLine("working copy_message");
+            string[] text = message.Caption.Split(' ');
+             Bot.CopyMessageAsync(text[0], message.Chat.Id, messageId: message.MessageId , caption: "");
+            //Bot.ForwardMessageAsync(text[0] , message.Chat.Id, messageId: message.MessageId) ;
+        }
         public static async Task callback_handler(Message message , string text)
         {
 
@@ -351,7 +358,15 @@ namespace Cons
                     }
                     if (message_type == "video" || message_type == "audio")  
                     {
-                        // await handler(message);
+                        try
+                        {
+                            await copy_message(message);
+                        }
+                        catch(Exception e)
+                        {
+                            await bot.SendTextMessageAsync(message.Chat, e.Message);
+                        }
+                       
                     }
                         
                 }
@@ -359,7 +374,6 @@ namespace Cons
                 {
                     await bot.SendTextMessageAsync(message.Chat, e.Message);
                 }
-                await bot.SendTextMessageAsync(message.Chat, "Привет-привет!!");
             }
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
             {
